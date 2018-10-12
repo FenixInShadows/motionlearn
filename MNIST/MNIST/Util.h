@@ -15,4 +15,5 @@ using namespace Eigen;
 void relu(MatrixXd &x);
 void softmax(MatrixXd &x);
 VectorXi argmax(const MatrixXd &x);
+double cross_entropy_discrete(const MatrixXd& probs, const VectorXi& labels);
 vector<string> split_string(string s, char delim);

@@ -58,3 +58,11 @@ std::vector<std::string> split_string(std::string s, char delim) {
 
 	return parts;
 }
+
+double cross_entropy_discrete(const MatrixXd& probs, const VectorXi& labels)
+{
+	double sum = 0;
+	for (int i = 0; i < labels.rows(); i++)
+		sum += log(probs(i, labels(i)));
+	return -sum / labels.rows();
+}
