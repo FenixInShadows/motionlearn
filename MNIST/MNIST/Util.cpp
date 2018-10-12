@@ -1,60 +1,50 @@
 #include "Util.h"
-bool comparator(const intDoublePair& l, const intDoublePair& r)
-{
-	return l.second < r.second;
-}
-void rotate2D(double &vx, double &vy, double theta) {
-	double cosa = cos(theta), sina = sin(theta);
-	//rotate goal heading by angle to get this heading
-	double vxtemp = vx*cosa + vy*-sina; 
-	double vytemp = vx*sina + vy*cosa;
-	vx = vxtemp;
-	vy = vytemp;
-}
-std::vector<intDoublePair> sortWithIndexReturn(std::vector<double> toSort) {
-	std::vector<intDoublePair> sorted(toSort.size());
-	for (int i = 0; i < toSort.size(); i++) {
-		sorted[i] = intDoublePair(i, toSort[i]);
-	}
-	std::sort(sorted.begin(),sorted.end(),comparator);
-	return sorted;
-}
-std::vector<intDoublePair> sortWithIndexReturn(std::list<double> toSort) {
-	std::vector<intDoublePair> sorted(toSort.size());
-	int ix = 0;
-	for (std::list<double>::iterator iter = toSort.begin(); iter != toSort.end(); ++iter) {
-		sorted[ix] = intDoublePair(ix, (*iter));
-		ix++;
-	}	
-	std::sort(sorted.begin(), sorted.end(),comparator);
-	return sorted;
-}
-void softmax(std::vector<double> &x){
-	double esum = 0;
-	for (int i = 0; i < x.size(); i++) {
-		x[i] = std::exp(x[i]);
-		esum += x[i];
-	}
-	for (int i = 0; i < x.size(); i++) {
-		x[i] = x[i] / esum;
-	}
-}
-int argmin(std::vector<double> &x) {
-	int amin = -1;
-	double min = 9e99;
-	for (int i = 0; i < x.size(); i++) {
-		if (x[i] < min) {
-			amin = i;
-			min = x[i];
+
+void relu(MatrixXd &x) {
+	for (int i = 0; i < x.rows(); i++) {
+		for (int j = 0; j < x.cols(); j++) {
+			if (x(i, j) < 0)
+				x(i, j) = 0;
 		}
 	}
-	return amin;
 }
-void normalize(double &vx, double &vy) {
-	double norm = std::sqrt(vx*vx + vy*vy);
-	vy = vy / norm;
-	vx = vx / norm;
+
+void softmax(MatrixXd &x) {
+	for (int i = 0; i < x.rows(); i++) {
+		double max = -numeric_limits<double>::max();
+		for (int j = 0; j < x.cols(); j++) {
+			if (x(i, j) > max)
+				max = x(i, j);
+		}
+		double esum = 0;
+		for (int j = 0; j < x.cols(); j++) {
+			x(i, j) = exp(x(i, j) - max);
+			esum += x(i, j);
+		}
+		for (int j = 0; j < x.cols(); j++) {
+			x(i, j) = x(i, j) / esum;
+		}
+	}
 }
+
+VectorXi argmax(const MatrixXd &x) {
+	VectorXi result(x.rows());
+
+	for (int i = 0; i < x.rows(); i++) {
+		int amax = -1;
+		double max = -numeric_limits<double>::max();
+		for (int j = 0; j < x.cols(); j++) {
+			if (x(i, j) > max) {
+				amax = j;
+				max = x(i, j);
+			}
+		}		
+		result(i) = amax;
+	}
+
+	return result;
+}
+
 std::vector<std::string> split_string(std::string s, char delim) {
 	std::istringstream ss(s);
 
