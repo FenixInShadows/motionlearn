@@ -45,6 +45,35 @@ VectorXi argmax(const MatrixXd &x) {
 	return result;
 }
 
+double cross_entropy_discrete(const MatrixXd& probs, const VectorXi& labels)
+{
+	double sum = 0;
+	for (int j = 0; j < labels.cols(); j++)
+		sum += log(probs(labels(j), j));
+	return -sum / labels.cols();
+}
+
+MatrixXd crossentropy_softmax_gradient(const MatrixXd& probs, const VectorXi& labels)
+{
+	MatrixXd result = probs;
+
+	for (int j = 0; j < labels.cols(); j++)
+		result(labels(j), j) -= 1.0;
+
+	return result;
+}
+
+MatrixXd relu_gradient(const MatrixXd& raws, const MatrixXd& vals)
+{
+	MatrixXd result(raws.rows(), raws.cols());
+
+	for (int j = 0; j < raws.cols(); j++)
+		for (int i = 0; i < raws.rows(); i++)
+			result(i, j) = (vals(i, j) > 0 ? raws(i, j) : 0.0);
+
+	return result;
+}
+
 std::vector<std::string> split_string(std::string s, char delim) {
 	std::istringstream ss(s);
 
@@ -59,10 +88,3 @@ std::vector<std::string> split_string(std::string s, char delim) {
 	return parts;
 }
 
-double cross_entropy_discrete(const MatrixXd& probs, const VectorXi& labels)
-{
-	double sum = 0;
-	for (int j = 0; j < labels.cols(); j++)
-		sum += log(probs(labels(j), j));
-	return -sum / labels.cols();
-}

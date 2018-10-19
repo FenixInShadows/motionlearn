@@ -16,4 +16,6 @@ void relu(MatrixXd &x);
 void softmax(MatrixXd &x);
 VectorXi argmax(const MatrixXd &x);
 double cross_entropy_discrete(const MatrixXd& probs, const VectorXi& labels);
+MatrixXd crossentropy_softmax_gradient(const MatrixXd& probs, const VectorXi& labels);
+MatrixXd relu_gradient(const MatrixXd& raws, const MatrixXd& vals);
 vector<string> split_string(string s, char delim);
