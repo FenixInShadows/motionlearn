@@ -49,7 +49,7 @@ double cross_entropy_discrete(const MatrixXd& probs, const VectorXi& labels)
 {
 	double sum = 0;
 	for (int j = 0; j < labels.cols(); j++)
-		sum += log(probs(labels(j), j));
+		sum += log(probs(labels(j), j) + 1e-30); // add this 1e-30 just to avoid inf, it does not affect the gradient we still keep that intact
 	return -sum / labels.cols();
 }
 
