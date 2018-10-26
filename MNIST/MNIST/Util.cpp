@@ -48,16 +48,16 @@ VectorXi argmax(const MatrixXd &x) {
 double cross_entropy_discrete(const MatrixXd& probs, const VectorXi& labels)
 {
 	double sum = 0;
-	for (int j = 0; j < labels.cols(); j++)
-		sum += log(probs(labels(j), j) + 1e-30); // add this 1e-30 just to avoid inf, it does not affect the gradient we still keep that intact
-	return -sum / labels.cols();
+	for (int j = 0; j < probs.cols(); j++)
+		sum += log(probs(labels(j), j) + 1e-30); // add this 1e-30 just to avoid inf, it does not affect the gradient as we still keep that intact
+	return -sum / probs.cols();
 }
 
 MatrixXd crossentropy_softmax_gradient(const MatrixXd& probs, const VectorXi& labels)
 {
 	MatrixXd result = probs;
 
-	for (int j = 0; j < labels.cols(); j++)
+	for (int j = 0; j < probs.cols(); j++)
 		result(labels(j), j) -= 1.0;
 
 	return result;
