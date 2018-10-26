@@ -45,11 +45,31 @@ VectorXi argmax(const MatrixXd &x) {
 	return result;
 }
 
+double accuracy(const MatrixXd &x, const VectorXi& labels)
+{
+	int count = 0;
+
+	for (int j = 0; j < x.cols(); j++) {
+		int amax = -1;
+		double max = -numeric_limits<double>::max();
+		for (int i = 0; i < x.rows(); i++) {
+			if (x(i, j) > max) {
+				amax = i;
+				max = x(i, j);
+			}
+		}
+		if (labels(j) == amax)
+			count++;
+	}
+
+	return (double)count / (double)x.cols();
+}
+
 double cross_entropy_discrete(const MatrixXd& probs, const VectorXi& labels)
 {
 	double sum = 0;
 	for (int j = 0; j < probs.cols(); j++)
-		sum += log(probs(labels(j), j) + 1e-30); // add this 1e-30 just to avoid inf, it does not affect the gradient as we still keep that intact
+		sum += log(probs(labels(j), j));
 	return -sum / probs.cols();
 }
 
@@ -72,6 +92,17 @@ MatrixXd relu_gradient(const MatrixXd& raws, const MatrixXd& vals)
 			result(i, j) = (vals(i, j) > 0 ? raws(i, j) : 0.0);
 
 	return result;
+}
+
+void random_shuffle_in_place(vector<int>& list)
+{
+	for (int i = list.size() - 1; i > 0; i--)
+	{
+		int j = rand() % i;
+		int tmp = list[j];
+		list[j] = list[i];
+		list[i] = tmp;
+	}
 }
 
 std::vector<std::string> split_string(std::string s, char delim) {
